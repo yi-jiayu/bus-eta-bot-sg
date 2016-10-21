@@ -10,6 +10,7 @@ const history_command_handler = require('./command-handlers/history');
 const version_command_handler = require('./command-handlers/version');
 const default_command_handler = require('./command-handlers/default');
 const help_command_handler = require('./command-handlers/help');
+const about_command_handler = require('./command-handlers/about');
 
 const Datastore = require('../datastore/interface').Datastore;
 const Analytics = require('../analytics/interface').Analytics;
@@ -33,6 +34,7 @@ class Bot {
       '/version': version_command_handler,
       '/history': history_command_handler,
       '/help': help_command_handler,
+      '/about': about_command_handler,
       'default': default_command_handler
     };
   }

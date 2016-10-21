@@ -19,7 +19,8 @@ Commands:
 \`/eta [bus stop code] [service numbers]\` - Get etas for a particular bus stop, optionally filtered by specific service numbers.
 \`/history\` - List your most recent successful eta queries.
 \`/version\` - Show the current Bus Eta Bot version.
-\`/about\` - View more information about this bot.`;
+\`/about\` - View more information about this bot.
+\`/help\` - Display this message.`;
 
   const config = {
     parse_mode: 'Markdown'
