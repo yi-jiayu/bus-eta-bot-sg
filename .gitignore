@@ -2,7 +2,7 @@
 lib/
 
 # private environment variables
-.env
+*.env
 
 # node-lambda files
 event.json
