@@ -1,6 +1,6 @@
 "use strict";
 
-const debug = require('debug')('bus-eta-bot-sg/command-handlers/default');
+const debug = require('debug')('bus-eta-bot-sg:bot/command-handlers/default');
 const telegram = require('../../telegram');
 const eta_query_results_message = require('../eta-query-results-message');
 const no_etas_error_text = 'Oops! Your query returned no etas. Are you sure you entered it correctly?';
@@ -38,6 +38,9 @@ module.exports = function(bot, msg, argstr) {
           // and push it to history
           .then(() => bot.datastore.pushUserHistory(chat_id, argstr))
 
+          // reset user state
+          .then(() => bot.datastore.setUserState(chat_id, 'none'))
+
           // unless there were no etas then we send an error message
           .catch(err => {
             if (err === 'no_etas') {
@@ -46,9 +49,6 @@ module.exports = function(bot, msg, argstr) {
               throw err;
             }
           })
-
-          // reset user state
-          .then(() => bot.datastore.setUserState(chat_id, 'none'))
 
           // analytics
           .then(() => Promise.all([bot.analytics.logAction(action_type, bus_stop, svc_nos), bot.analytics.logUser(action_type, msg)]))
