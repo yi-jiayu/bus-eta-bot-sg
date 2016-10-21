@@ -59,16 +59,16 @@ function eta_query_results_message(bus_stop, svc_nos) {
       const config = {
         parse_mode: 'Markdown',
         reply_markup: JSON.stringify({
-          inline_keyboard: [
-            [{
+          inline_keyboard: [[
+            {
               text: 'Refresh',
               callback_data: JSON.stringify({t: 'eta', a: [bus_stop, ...svc_nos].join(' ')})
-            }],
-            [{
+            },
+            {
               text: 'Done',
               callback_data: JSON.stringify({t: 'eta', d: true})
-            }]
-          ]
+            }
+          ]]
         })
       };
 

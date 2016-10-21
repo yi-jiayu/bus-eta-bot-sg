@@ -6,11 +6,20 @@ const endpoint = 'https://api.telegram.org/bot';
 const token = process.env.TELEGRAM_BOT_TOKEN;
 
 class OutgoingTextMessage {
+  /**
+   * Creates a new outgoing text message
+   * @param {string} text
+   * @param {object} [config]
+   */
   constructor(text, config) {
     this.text = text;
     this.config = config || {};
   }
 
+  /**
+   * Sends the message to chatId
+   * @param chatId
+   */
   send(chatId) {
     return sendMessage(chatId, this.text, this.config);
   }
