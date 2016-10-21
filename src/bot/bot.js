@@ -4,9 +4,11 @@ const telegram = require('../telegram');
 
 const parse_text_msg = require('./parse-text-msg');
 const eta_callback_handler = require('./callback-query-handlers/eta');
+const history_callback_handler = require('./callback-query-handlers/history');
 const eta_command_handler = require('./command-handlers/eta');
-const default_command_handler = require('./command-handlers/default');
+const history_command_handler = require('./command-handlers/history');
 const version_command_handler = require('./command-handlers/version');
+const default_command_handler = require('./command-handlers/default');
 
 const Datastore = require('../datastore/interface').Datastore;
 const Analytics = require('../analytics/interface').Analytics;
@@ -22,11 +24,13 @@ class Bot {
     this.analytics = analytics || new Analytics();
 
     this.callback_query_handlers = {
-      'eta': eta_callback_handler
+      'eta': eta_callback_handler,
+      'hist': history_callback_handler
     };
     this.command_handlers = {
       '/eta': eta_command_handler,
       '/version': version_command_handler,
+      '/history': history_command_handler,
       'default': default_command_handler
     };
   }
