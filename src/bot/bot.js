@@ -9,6 +9,7 @@ const eta_command_handler = require('./command-handlers/eta');
 const history_command_handler = require('./command-handlers/history');
 const version_command_handler = require('./command-handlers/version');
 const default_command_handler = require('./command-handlers/default');
+const help_command_handler = require('./command-handlers/help');
 
 const Datastore = require('../datastore/interface').Datastore;
 const Analytics = require('../analytics/interface').Analytics;
@@ -31,6 +32,7 @@ class Bot {
       '/eta': eta_command_handler,
       '/version': version_command_handler,
       '/history': history_command_handler,
+      '/help': help_command_handler,
       'default': default_command_handler
     };
   }
@@ -71,7 +73,7 @@ class Bot {
       const handler = this.command_handlers[command];
 
       return this.datastore.setUserState(msg.chat_id, 'none')
-        .then(() =>  handler(this, msg, argstr));
+        .then(() => handler(this, msg, argstr));
     }
   }
 
