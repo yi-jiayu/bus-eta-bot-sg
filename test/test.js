@@ -7,9 +7,9 @@ const bot = new Bot(null, null);
 
 const handler = function (event, context, callback) {
   console.log(event);
-  callback(null);
   bot.handle(event)
-    .catch(err => debug(err));
+    .catch(err => debug(err))
+    .then(() => callback(null));
 };
 
 
@@ -19,8 +19,8 @@ const update = {
     "from": {"id": 100710735, "first_name": "Jiayu", "username": "jiayu1"},
     "chat": {"id": 100710735, "first_name": "Jiayu", "username": "jiayu1", "type": "private"},
     "date": 1476436973,
-    "text": "/eta 96049",
-    "entities": [{"type": "bot_command", "offset": 0, "length": 4}]
+    "text": "/version",
+    "entities": [{"type": "bot_command", "offset": 0, "length": 8}]
   }
 };
 

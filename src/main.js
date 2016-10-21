@@ -7,7 +7,7 @@ const Bot = require('./bot/bot').Bot;
 const KeenAnalytics = require('./analytics/keen2').KeenAnalytics;
 const DynamoDBDatastore = require('./datastore/dynamodb').DynamoDBDatastore;
 
-const datastore = new DynamoDBDatastore('bus-eta-bot-sg-test', 'my_key');
+const datastore = new DynamoDBDatastore(process.env.DYNAMODB_TABLE, process.env.DYNAMODB_KEY);
 const analytics = new KeenAnalytics();
 const bot = new Bot(datastore, analytics);
 
