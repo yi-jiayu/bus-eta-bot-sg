@@ -11,6 +11,7 @@ const version_command_handler = require('./command-handlers/version');
 const default_command_handler = require('./command-handlers/default');
 const help_command_handler = require('./command-handlers/help');
 const about_command_handler = require('./command-handlers/about');
+const start_command_handler = require('./command-handlers/start');
 
 const Datastore = require('../datastore/interface').Datastore;
 const Analytics = require('../analytics/interface').Analytics;
@@ -35,6 +36,7 @@ class Bot {
       '/history': history_command_handler,
       '/help': help_command_handler,
       '/about': about_command_handler,
+      '/start': start_command_handler,
       'default': default_command_handler
     };
   }
@@ -77,6 +79,8 @@ class Bot {
       return this.datastore.setUserState(msg.chat_id, 'none')
         .then(() => handler(this, msg, argstr));
     }
+
+    return Promise.reject('no handler registered for command ' + command);
   }
 
   handle(update) {

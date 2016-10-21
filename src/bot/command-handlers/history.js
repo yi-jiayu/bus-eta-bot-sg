@@ -1,6 +1,6 @@
 "use strict";
 
-const debug = require('debug')('bus-eta-bot:bot/command-handlers/history');
+const debug = require('debug')('bus-eta-bot-sg:bot/command-handlers/history');
 const telegram = require('../../telegram');
 
 /**
