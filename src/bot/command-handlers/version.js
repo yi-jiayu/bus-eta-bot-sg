@@ -10,6 +10,7 @@ const telegram = require('../../telegram');
 module.exports = function (bot, msg) {
   const action = 'version';
 
+  // todo: find way to include date with version information
   const text = `Bus Eta Bot \`v${process.env.BOT_VERSION}\``;
   const config = {parse_mode: 'Markdown'};
 

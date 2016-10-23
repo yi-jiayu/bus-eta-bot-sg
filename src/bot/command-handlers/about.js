@@ -2,6 +2,7 @@
 
 const debug = require('debug')('bus-eta-bot-sg:bot/command-handlers/about');
 const telegram = require('../../telegram');
+const strings = require('../strings');
 
 /**
  * About message
@@ -13,10 +14,7 @@ module.exports = function (bot, msg) {
 
   const chat_id = msg.chat_id;
 
-  const text = `*About Bus Eta Bot*
-A simple telegram bot to query bus etas in Singapore.
-
-[GitHub](https://github.com/yi-jiayu/bus-eta-bot-sg)`;
+  const text = strings.about_text;
 
   const config = {
     parse_mode: 'Markdown'

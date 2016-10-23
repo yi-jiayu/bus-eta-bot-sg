@@ -2,6 +2,7 @@
 
 const debug = require('debug')('bus-eta-bot-sg:bot/command-handlers/history');
 const telegram = require('../../telegram');
+const strings = require('../strings');
 
 /**
  * Command handler for /history
@@ -11,9 +12,8 @@ const telegram = require('../../telegram');
  */
 module.exports = function(bot, msg, argstr) {
   const chat_id = msg.chat_id;
-  const history_message = 'Here are some of your recent queries:';
-  const no_history_message = 'Oops, it looks like there are no queries in your history. Your most recent queries ' +
-    'which returned etas will be accessible.';
+  const history_message = strings.history_list_text;
+  const no_history_message = strings.no_history_error_text;
 
   return bot.datastore.getUserHistory(chat_id)
     .then(history => {

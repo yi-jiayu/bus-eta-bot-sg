@@ -3,6 +3,7 @@
 const debug = require('debug')('bus-eta-bot-sg:bot/callback-query-handlers/history');
 const telegram = require('../../telegram');
 const eta_query_results_message = require('../eta-query-results-message');
+const strings = require('../strings');
 
 /**
  *
@@ -45,7 +46,7 @@ function history_cancel(bot, cbq) {
   const chat_id = cbq.message.chat_id;
   const message_id = cbq.message.message_id;
 
-  const text = 'Use /history to view your most recent successful eta queries.';
+  const text = strings.history_cancel_text;
 
   // remove callback buttons
   return new telegram.OutgoingTextMessage(text).update(chat_id, message_id)
@@ -70,8 +71,7 @@ module.exports = function (bot, cbq, data) {
   // if the message is too old and the callback query no longer includes the original message,
   // say that we can't respond to it
   if (cbq.message === null) {
-    const text = "Oops! It seems like this message is too old and I have forgotten about it, so I can't refresh the " +
-      "etas for you, sorry about that 😔";
+    const text = strings.history_callback_too_old_error_text;
 
     return cbq.answer(text);
   }

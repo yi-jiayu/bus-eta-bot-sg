@@ -16,6 +16,7 @@ module.exports = function (bot, msg, argstr) {
   const chat_id = msg.chat_id;
   const first_name = msg.first_name;
 
+  // todo: maybe convert this to a function in the strings module
   const text = `*Hello ${first_name}*,
   
 Bus Eta Bot is a simple bot which can tell you the estimated time you have to wait for buses in Singapore. Its information comes from the same source as the official LTA MyTransport app and many other bus arrival time apps through the LTA Datamall API.

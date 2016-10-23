@@ -3,7 +3,7 @@
 const debug = require('debug')('bus-eta-bot-sg:bot/command-handlers/default');
 const telegram = require('../../telegram');
 const eta_query_results_message = require('../eta-query-results-message');
-const no_etas_error_text = 'Oops! Your query returned no etas. Are you sure you entered it correctly?';
+const strings = require('../strings');
 
 /**
  *
@@ -44,7 +44,7 @@ module.exports = function(bot, msg, argstr) {
           // unless there were no etas then we send an error message
           .catch(err => {
             if (err === 'no_etas') {
-              return new telegram.OutgoingTextMessage(no_etas_error_text).send(chat_id);
+              return new telegram.OutgoingTextMessage(strings.no_etas_error_text).send(chat_id);
             } else {
               throw err;
             }

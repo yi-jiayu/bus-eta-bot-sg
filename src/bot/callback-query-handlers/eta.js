@@ -4,6 +4,7 @@ const debug = require('debug')('bus-eta-bot-sg:bot/callback-query-handlers/eta')
 const telegram = require('../../telegram');
 
 const eta_query_results_message = require('../eta-query-results-message');
+const strings = require('../strings');
 
 /**
  * Converts an IncomingTextMessage representing a previous eta query results message into a OutgoingTextMessage
@@ -103,8 +104,7 @@ module.exports = function (bot, cbq, data) {
   // if the message is too old and the callback query no longer includes the original message,
   // say that we can't respond to it
   if (cbq.message === null) {
-    const text = "Oops! It seems like this message is too old and I have forgotten about it, so I can't refresh the " +
-      "etas for you, sorry about that 😔";
+    const text = strings.eta_callback_too_old_error_text;
 
     return cbq.answer(text);
   }

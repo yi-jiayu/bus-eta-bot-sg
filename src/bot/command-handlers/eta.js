@@ -5,9 +5,7 @@ const debug = require('debug')('bus-eta-bot-sg:bot/command-handlers/eta');
 const telegram = require('../../telegram');
 
 const eta_query_results_message = require('../eta-query-results-message');
-const eta_noargs_challenge_text = 'What is the number of the bus stop you would like to query etas for? You may ' +
-  'optionally also include the specific bus services you are interested in. (Eg. `96049 2 24`)';
-const no_etas_error_text = 'Oops! Your query returned no etas. Are you sure you entered it correctly?';
+const strings = require('../strings');
 
 /**
  * Handler function for eta command called without arguments
@@ -18,7 +16,7 @@ function eta_noargs(bot, msg) {
   const action_type = 'eta_noargs';
   const chat_id = msg.chat_id;
 
-  const text = eta_noargs_challenge_text;
+  const text = strings.eta_noargs_challenge_text;
   const config = {parse_mode: 'Markdown'};
 
   // send challenge message asking for bus stop and service numbers
@@ -58,7 +56,7 @@ function eta(bot, msg, bus_stop, svc_nos) {
     // unless it returned no etas
     .catch(err => {
       if (err === 'no_etas') {
-        return new telegram.OutgoingTextMessage(no_etas_error_text).send(chat_id);
+        return new telegram.OutgoingTextMessage(strings.no_etas_error_text).send(chat_id);
       } else {
         throw err;
       }
