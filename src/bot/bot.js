@@ -13,18 +13,18 @@ const help_command_handler = require('./command-handlers/help');
 const about_command_handler = require('./command-handlers/about');
 const start_command_handler = require('./command-handlers/start');
 
-const Datastore = require('../datastore/interface').Datastore;
-const Analytics = require('../analytics/interface').Analytics;
+const NOPDatastore = require('../datastore/nop').Datastore;
+const NOPAnalytics = require('../analytics/nop').Analytics;
 
 class Bot {
   /**
    * Create a new bot instance
-   * @param {Datastore} datastore
-   * @param {Analytics} analytics
+   * @param {NOPDatastore} datastore
+   * @param {NOPAnalytics} analytics
    */
   constructor(datastore, analytics) {
-    this.datastore = datastore || new Datastore();
-    this.analytics = analytics || new Analytics();
+    this.datastore = datastore || new NOPDatastore();
+    this.analytics = analytics || new NOPAnalytics();
 
     this.callback_query_handlers = {
       'eta': eta_callback_handler,
@@ -84,13 +84,16 @@ class Bot {
   }
 
   handle(update) {
-    if (Bot._isCallbackQuery(update)) {
-      const cbq = new telegram.CallbackQuery(update.callback_query);
-      return this._dispatch_callback_query(cbq);
-    } else if (Bot._isTextMessage(update)) {
-      const msg = new telegram.IncomingTextMessage(update.message);
-      return this._dispatch_text_message(msg);
-    }
+    return Promise.resolve()
+      .then(() => {
+        if (Bot._isCallbackQuery(update)) {
+          const cbq = new telegram.CallbackQuery(update.callback_query);
+          return this._dispatch_callback_query(cbq);
+        } else if (Bot._isTextMessage(update)) {
+          const msg = new telegram.IncomingTextMessage(update.message);
+          return this._dispatch_text_message(msg);
+        }
+      });
   }
 }
 

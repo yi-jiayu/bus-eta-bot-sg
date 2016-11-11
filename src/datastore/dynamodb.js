@@ -3,7 +3,7 @@
 const debug = require('debug')('bus-eta-bot-sg:datastore/dynamodb');
 const AWS = require('aws-sdk');
 
-const Datastore = require('./interface').Datastore;
+const Datastore = require('./nop').Datastore;
 
 /**
  * DynamoDBDatastore implements a datastore based on AWS DynamoDB.

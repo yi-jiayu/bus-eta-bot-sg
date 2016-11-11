@@ -28,7 +28,10 @@ class Datastore {
    * @returns {Promise<UserState>}
    */
   getUserState(chat_id) {
-    return Promise.resolve();
+    return Promise.resolve({
+      state: '',
+      data: {}
+    });
   }
 
   /**
@@ -47,7 +50,7 @@ class Datastore {
    * @returns {Promise.<string[]>}
    */
   getUserHistory(chat_id) {
-    return Promise.resolve();
+    return Promise.resolve([]);
   }
 
   // todo: implement api for saving favourites

@@ -1,7 +1,7 @@
 "use strict";
 
 const request = require('request');
-const Analytics = require('./interface').Analytics;
+const Analytics = require('./nop').Analytics;
 
 class KeenAnalytics extends Analytics {
   constructor() {
