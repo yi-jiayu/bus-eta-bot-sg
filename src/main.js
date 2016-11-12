@@ -26,5 +26,5 @@ exports.handler = function (event, context, callback) {
 
   bot.handle(event)
     .catch(err => debug(err))
-    .then(() => callback(null));
+    .then(result => callback(null, result));
 };

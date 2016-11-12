@@ -120,6 +120,41 @@ class DynamoDBDatastore extends Datastore {
         return item.history || [];
       });
   }
+
+  getUserFavourites(user_id) {
+    const params = {
+      TableName: this.tableName,
+      Key: {
+        [this.key]: `${user_id}_favourites`
+      }
+    };
+
+    return this.docClient.get(params).promise()
+      .then(result => {
+        const item = result.Item || {};
+        return item.favourites || [];
+      })
+  }
+
+  setUserFavourites(user_id, favourites) {
+    const params = {
+      TableName: this.tableName,
+      Item: {
+        [this.key]: `${user_id}_favourites`,
+        favourites
+      }
+    };
+
+    return this.docClient.put(params).promise();
+  }
+
+  addUserFavourite(user_id, favourite) {
+    return this.getUserFavourites(user_id)
+      .then(favourites => {
+        favourites.push(favourite);
+        return this.setUserFavourites(user_id, favourites);
+      });
+  }
 }
 
 module.exports = {

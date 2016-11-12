@@ -6,6 +6,12 @@
  * @property {object} data
  */
 
+/**
+ * @typedef {object} UserFavourite
+ * @property {string} label
+ * @property {string} argstr
+ */
+
 class Datastore {
   constructor() {
     this.HISTORY_SIZE = 5;
@@ -53,14 +59,22 @@ class Datastore {
     return Promise.resolve([]);
   }
 
-  // todo: implement api for saving favourites
-  // setUserFavourites(userId, favourites) {
-  //   return Promise.resolve();
-  // }
-  //
-  // getUserFavourites(userId) {
-  //   return Promise.resolve();
-  // }
+  /**
+   * Returns an array of a users favourited queries
+   * @param user_id
+   * @returns {Promise.<UserFavourite[]>}
+   */
+  getUserFavourites(user_id) {
+    return Promise.resolve([]);
+  }
+
+  setUserFavourites(user_id, favourites) {
+    return Promise.resolve();
+  }
+
+  addUserFavourite(user_id, favourite) {
+    return Promise.resolve();
+  }
 }
 
 module.exports = {

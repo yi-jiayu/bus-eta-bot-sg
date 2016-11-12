@@ -12,6 +12,7 @@ const default_command_handler = require('./command-handlers/default');
 const help_command_handler = require('./command-handlers/help');
 const about_command_handler = require('./command-handlers/about');
 const start_command_handler = require('./command-handlers/start');
+const save_command_handler = require('./command-handlers/save');
 
 const NOPDatastore = require('../datastore/nop').Datastore;
 const NOPAnalytics = require('../analytics/nop').Analytics;
@@ -37,6 +38,7 @@ class Bot {
       '/help': help_command_handler,
       '/about': about_command_handler,
       '/start': start_command_handler,
+      '/save': save_command_handler,
       'default': default_command_handler
     };
   }
