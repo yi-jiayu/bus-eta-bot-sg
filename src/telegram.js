@@ -16,16 +16,24 @@ class OutgoingTextMessage {
     this.config = config || {};
   }
 
+  sendMessage(chatId) {
+    return new sendMessage(chatId, this.text, this.config);
+  }
+
+  editMessageText(chatId, msgId) {
+    return new editMessageText(chatId, msgId, null, this.text, this.config);
+  }
+
   /**
    * Sends the message to chatId
    * @param chatId
    */
   send(chatId) {
-    return sendMessage(chatId, this.text, this.config);
+    return new sendMessage(chatId, this.text, this.config).do();
   }
 
   update(chatId, msgId) {
-    return editMessageText(chatId, msgId, null, this.text, this.config);
+    return new editMessageText(chatId, msgId, null, this.text, this.config);
   }
 }
 
@@ -69,103 +77,119 @@ class CallbackQuery {
    * @param {string} [url]
    */
   answer(text, show_alert, url) {
-    return answerCallbackQuery(this.callback_query_id, text, show_alert, url);
+    return new answerCallbackQuery(this.callback_query_id, text, show_alert, url);
   }
 }
 
-function sendMessage(chatId, text, config) {
-  const params = {
-    chat_id: chatId,
-    text
-  };
+class TelegramMethod {
+  constructor(method) {
+    this.method = method;
+    this.params = {};
+  }
 
-  const optional = ['parse_mode', 'disable_web_page_preview', 'disable_notification', 'reply_to_message_id', 'reply_markup'];
-  for (const param of optional) {
-    if (config[param]) {
-      params[param] = config[param];
+  serialise() {
+    const body = this.params;
+    body.method = this.method;
+    return body;
+  }
+
+  do() {
+    return new Promise((resolve, reject) => {
+      request.post({
+          uri: endpoint + token + '/' + this.method,
+          body: this.params,
+          json: true
+        },
+        (err, res, body) => {
+          if (err) reject(err);
+          else resolve(body);
+        })
+    });
+  }
+}
+
+class sendMessage extends TelegramMethod {
+  constructor(chatId, text, config) {
+    super('sendMessage');
+
+    const params = {
+      chat_id: chatId,
+      text
+    };
+
+    const optional = ['parse_mode', 'disable_web_page_preview', 'disable_notification', 'reply_to_message_id', 'reply_markup'];
+    for (const param of optional) {
+      if (config[param]) {
+        params[param] = config[param];
+      }
     }
-  }
 
-  return new Promise((resolve, reject) => {
-    request.post({
-        uri: endpoint + token + '/sendMessage',
-        body: params,
-        json: true
-      },
-      (err, res, body) => {
-        if (err) reject(err);
-        else resolve(body);
-      })
-  });
+    this.params = params;
+  }
 }
 
-function editMessageText(chatId, msgId, inlineMsgId, text, config) {
-  const params = {
-    text
-  };
+class editMessageText extends TelegramMethod {
+  constructor(chatId, msgId, inlineMsgId, text, config) {
+    super('editMessageText');
 
-  if (inlineMsgId === null) {
-    params.chat_id = chatId;
-    params.message_id = msgId;
-  } else {
-    params.inline_message_id = inlineMsgId;
-  }
+    const params = {
+      text
+    };
 
-  const optional = ['parse_mode', 'disable_web_page_preview', 'reply_markup'];
-  for (const param of optional) {
-    if (config[param]) {
-      params[param] = config[param];
+    if (inlineMsgId === null) {
+      params.chat_id = chatId;
+      params.message_id = msgId;
+    } else {
+      params.inline_message_id = inlineMsgId;
     }
-  }
 
-  return new Promise((resolve, reject) => {
-    request.post({
-        uri: endpoint + token + '/editMessageText',
-        body: params,
-        json: true
-      },
-      (err, res, body) => {
-        if (err) reject(err);
-        else resolve(body);
-      });
-  });
+    const optional = ['parse_mode', 'disable_web_page_preview', 'reply_markup'];
+    for (const param of optional) {
+      if (config[param]) {
+        params[param] = config[param];
+      }
+    }
+
+    this.params = params;
+  }
 }
 
-function answerCallbackQuery(callback_query_id, text, show_alert, url) {
-  if (!callback_query_id) {
-    throw new TypeError();
+class answerCallbackQuery extends TelegramMethod {
+  constructor(callback_query_id, text, show_alert, url) {
+    super('answerCallbackQuery');
+
+    if (!callback_query_id) {
+      throw new TypeError();
+    }
+
+    const params = {
+      callback_query_id
+    };
+
+    if (text) {
+      params.text = text;
+    }
+
+    if (show_alert) {
+      params.show_alert = show_alert;
+    }
+
+    if (url) {
+      params.url = url;
+    }
+
+    this.params = params;
   }
-
-  const params = {
-    callback_query_id
-  };
-
-  if (text) {
-    params.text = text;
-  }
-
-  if (show_alert) {
-    params.show_alert = show_alert;
-  }
-
-  if (url) {
-    params.url = url;
-  }
-
-  return new Promise((resolve, reject) => {
-    request.post({
-      url: endpoint + token + '/answerCallbackQuery',
-      body: params,
-      json: true
-    },
-      (err, res, body) => {
-        if (err) reject(err);
-        else resolve(body);
-      })
-  });
 }
+
+const methods = {
+  sendMessage,
+  editMessageText,
+  answerCallbackQuery
+};
 
 module.exports = {
+  methods,
   IncomingTextMessage,
   CallbackQuery,
   OutgoingTextMessage
