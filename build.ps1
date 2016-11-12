@@ -10,10 +10,9 @@ else { rm -R out/* | out-null }
 
 Write-Output "$(Get-Date)   [END] Cleaning output directory"
 
-# create out/build
-
 Write-Output "$(Get-Date)   [START] Creating build folder"
 
+# create out/build
 if ($v) { mkdir out/build }
 else { mkdir out/build | out-null }
 
@@ -43,16 +42,33 @@ else { cp $env_file out/build/.env | out-null }
 
 Write-Output "$(Get-Date)   [END] Copying environment file ($($env_file))"
 
+Write-Output "$(Get-Date)   [START] Copying package.json into out/build"
+
+if ($v) { cp package.json out/build/package.json }
+else { cp package.json out/build/package.json | out-null }
+
+Write-Output "$(Get-Date)   [END] Copying package.json into out/build"
+
+Write-Output "$(Get-Date)   [START] Stepping into out/build"
+
+cd out/build
+
+Write-Output "$(Get-Date)     [START] Installing node modules"
+
 # npm install into out/build folder
-Write-Output "$(Get-Date)   [START] Installing node modules"
+if ($v) { npm install --production }
+else { npm install --production | out-null }
 
-if ($v) { npm install --prefix out/build --production }
-else { npm install --prefix out/build --production | out-null }
+Write-Output "$(Get-Date)     [END] Installing node modules"
 
-Write-Output "$(Get-Date)   [END] Installing node modules"
+cd ../..
+
+Write-Output "$(Get-Date)   [END] Stepping into out/build"
 
 # zip out into out/build.zip
 Write-Output "$(Get-Date)   [START] Zipping files into $out_file"
+
+If (Test-path $out_file) {Remove-item $out_file | out-null }
 
 Add-Type -assembly "system.io.compression.filesystem"
 [io.compression.zipfile]::CreateFromDirectory('out\build', $out_file)
