@@ -33,7 +33,7 @@ class OutgoingTextMessage {
   }
 
   update(chatId, msgId) {
-    return new editMessageText(chatId, msgId, null, this.text, this.config);
+    return new editMessageText(chatId, msgId, null, this.text, this.config).do();
   }
 }
 
@@ -77,7 +77,7 @@ class CallbackQuery {
    * @param {string} [url]
    */
   answer(text, show_alert, url) {
-    return new answerCallbackQuery(this.callback_query_id, text, show_alert, url);
+    return new answerCallbackQuery(this.callback_query_id, text, show_alert, url).do();
   }
 }
 
