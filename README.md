@@ -6,3 +6,5 @@
 - 1.0.3 - Added /history command
 - 1.0.4 - Added /help command
 - 1.0.5 - Added /about command
+- **1.0.9** 
+  - Implemented saving a query and a label with /save
