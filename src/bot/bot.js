@@ -13,6 +13,7 @@ const help_command_handler = require('./command-handlers/help');
 const about_command_handler = require('./command-handlers/about');
 const start_command_handler = require('./command-handlers/start');
 const save_command_handler = require('./command-handlers/save');
+const inline_query_handler = require('./inline_query_handler');
 
 const NOPDatastore = require('../datastore/nop').Datastore;
 const NOPAnalytics = require('../analytics/nop').Analytics;
@@ -51,6 +52,9 @@ class Bot {
     return update.hasOwnProperty('message') && update.message.hasOwnProperty('text');
   }
 
+  static _isInlineQuery(update) {
+    return update.hasOwnProperty('inline_query');
+  }
 
   _dispatch_callback_query(cbq) {
     const cbq_data = JSON.parse(cbq.data);
@@ -85,6 +89,10 @@ class Bot {
     return Promise.reject('no handler registered for command ' + command);
   }
 
+  _handle_inline_query(ilq) {
+    return inline_query_handler(this, ilq);
+  }
+
   handle(update) {
     return Promise.resolve()
       .then(() => {
@@ -94,6 +102,9 @@ class Bot {
         } else if (Bot._isTextMessage(update)) {
           const msg = new telegram.IncomingTextMessage(update.message);
           return this._dispatch_text_message(msg);
+        } else if (Bot._isInlineQuery(update)) {
+          const ilq = new telegram.InlineQuery(update.inline_query);
+          return this._handle_inline_query(ilq);
         }
       });
   }
