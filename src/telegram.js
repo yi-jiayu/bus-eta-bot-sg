@@ -20,14 +20,8 @@ class OutgoingTextMessage {
     return new sendMessage(chatId, this.text, this.config);
   }
 
-  editMessageText(chatId, msgId) {
-    if (arguments.length === 2 || msgId === null) {
-      return new editMessageText(chatId, msgId, null, this.text, this.config);
-    } else if (arguments.length === 1) {
-      return new editMessageText(null, null, chatId, this.text, this.config);
-    } else {
-      throw new TypeError();
-    }
+  editMessageText(chatId, msgId, inline_message_id) {
+    return new editMessageText(chatId, msgId, inline_message_id, this.text, this.config);
   }
 
   /**
@@ -42,14 +36,11 @@ class OutgoingTextMessage {
    * Updates a message sent by the bot normally or via inline mode depending on the number of parameters
    * @param chatId
    * @param msgId
+   * @param inline_message_id
    * @return {*}
    */
-  update(chatId, msgId) {
-    if (msgId === null || arguments.length === 1) {
-      return this.editMessageText(chatId).do();
-    } else {
-      return this.editMessageText(chatId, msgId).do();
-    }
+  update(chatId, msgId, inline_message_id) {
+    return this.editMessageText(chatId, msgId, inline_message_id).do();
   }
 }
 
@@ -275,6 +266,31 @@ class editMessageText extends TelegramMethod {
   }
 }
 
+class editMessageReplyMarkup extends TelegramMethod {
+  constructor(chat_id, message_id, inline_message_id, reply_markup) {
+    super('editMessageReplyMarkup');
+
+    if (!inline_message_id) {
+      if (!(chat_id && message_id)) {
+        throw new TypeError('if inline_message_id is not provided, chat_id and message_id have to be provided');
+      }
+
+      this.params.chat_id = chat_id;
+      this.params.message_id = message_id;
+    } else {
+      if (chat_id || message_id) {
+        throw new TypeError('if inline_message_id is provided, chat_id and message_id cannot be provided');
+      }
+
+      this.params.inline_message_id = inline_message_id;
+    }
+
+    if (reply_markup) {
+      this.params.reply_markup = reply_markup;
+    }
+  }
+}
+
 class answerCallbackQuery extends TelegramMethod {
   constructor(callback_query_id, text, show_alert, url) {
     super('answerCallbackQuery');
@@ -343,5 +359,6 @@ module.exports = {
   OutgoingTextMessage,
   InlineQuery,
   InlineQueryResultArticle,
-  InputTextMessageContent
+  InputTextMessageContent,
+  editMessageReplyMarkup
 };
