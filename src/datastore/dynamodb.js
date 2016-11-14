@@ -81,23 +81,34 @@ class DynamoDBDatastore extends Datastore {
     // get user history first
     return this.getUserHistory(chat_id)
       .then(history => {
-        if (history.indexOf(argstr) === -1) {
+        // if this query is not currently in the user's history, we append it to the front
+        const index = history.indexOf(argstr);
+
+        if (index === -1) {
           history = [argstr, ...history];
 
-          if (history.length > 5) {
-            history = history.slice(0, this.HISTORY_SIZE);
+          // we trim the history to the max history length if it is too long
+          if (history.length > this.MAX_HISTORY_LENGTH) {
+            history = history.slice(0, this.MAX_HISTORY_LENGTH);
           }
+        } else {
+          // otherwise we just bring the matching element to the front
+          // remove the matching element from history
+          history.splice(index, 1);
 
-          const params = {
-            TableName: this.tableName,
-            Item: {
-              [this.key]: `${chat_id}_history`,
-              history
-            }
-          };
-
-          return this.docClient.put(params).promise();
+          // append the argstr to history
+          history = [argstr, ...history];
         }
+
+        const params = {
+          TableName: this.tableName,
+          Item: {
+            [this.key]: `${chat_id}_history`,
+            history
+          }
+        };
+
+        return this.docClient.put(params).promise();
       });
   }
 

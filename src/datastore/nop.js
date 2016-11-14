@@ -14,7 +14,7 @@
 
 class Datastore {
   constructor() {
-    this.HISTORY_SIZE = 5;
+    this.MAX_HISTORY_LENGTH = 5;
   }
 
   /**
