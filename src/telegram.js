@@ -111,6 +111,15 @@ class InlineQuery {
     this.query = ilq.query;
   }
 
+  /**
+   * Answer an inline query
+   * @param {InlineQueryResult[]} results
+   * @param {object} [options]
+   * @param {number} [options.cache_time]
+   * @param {boolean} [options.is_personal]
+   * @param {string} [options.switch_pm_text]
+   * @param {string} [options.switch_pm_parameter]
+   */
   answerInlineQuery(results, options) {
     return new answerInlineQuery(this.inline_query_id, results, options);
   }
