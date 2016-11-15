@@ -16,6 +16,9 @@
       messages only contain an 'inline_query_id' field.
   - Changed 'Done' callback button implementation to use Telegram Bot API method 'updateMessageReplyMarkup' instead of
     'updateMessageText'
+- **1.1.0**
+  - Make a new eta query from an inline query
+    - Users can now make new queries directly in inline queries, besides searching their saved queries and history
 
 ## TODO
 
@@ -30,8 +33,11 @@
 6. Refactor out command-handlers/default into separate continuation-handlers for each state
 7. Change versioning scheme to follow semantic versioning (semver)
   - Increment MINOR version instead of PATCH on feature updates
+8. Use ChosenInlineResult to add queries made through inline queries to user history as well as analytics
 
 ## Roadmap
 
 - **1.1**
-  - TODO #1, #4, #7
+  - TODO 
+    - ~~#4~~
+    - ~~#7~~
