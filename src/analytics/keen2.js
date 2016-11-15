@@ -28,7 +28,7 @@ class KeenAnalytics extends Analytics {
   /**
    * Log a user interaction
    * @param {string} action
-   * @param {IncomingTextMessage|CallbackQuery} source
+   * @param {IncomingTextMessage|CallbackQuery|InlineQuery} source
    * @returns {Promise}
    */
   logUser(action, source) {

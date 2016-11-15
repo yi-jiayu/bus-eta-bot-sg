@@ -128,5 +128,13 @@ module.exports = function (bot, ilq) {
           // set cache_time to 10 seconds since bus etas are extremely time sensitive
           return ilq.answerInlineQuery(results, {cache_time: 10, is_personal: true}).do();
         });
+    })
+
+    // analytics
+    .then(() => Promise.all([bot.analytics.logAction('inline_query'), bot.analytics.logUser('inline_query', ilq)]))
+
+    .catch(err => {
+      debug(err);
+      return bot.analytics.logError(err, err.message);
     });
 };
