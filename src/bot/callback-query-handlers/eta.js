@@ -56,22 +56,22 @@ function eta_refresh(bot, cbq, argstr) {
   const bus_stop = args[0];
   const svc_nos = args.slice(1);
 
-  let chat_id, msg_id, callback_query_id;
+  let chat_id, msg_id, inline_message_id;
 
   if (cbq.inline_message_id === null) {
     chat_id = cbq.message.chat_id;
     msg_id = cbq.message.message_id;
-    callback_query_id = null;
+    inline_message_id = null;
   } else {
     chat_id = null;
     msg_id = null;
-    callback_query_id = cbq.callback_query_id;
+    inline_message_id = cbq.inline_message_id;
   }
 
   return eta_query_results_message(bus_stop, svc_nos)
 
   // update etas and answer callback query
-    .then(msg => Promise.all([msg.update(chat_id, msg_id, callback_query_id), cbq.answer('Etas updated!')]))
+    .then(msg => Promise.all([msg.update(chat_id, msg_id, inline_message_id), cbq.answer('Etas updated!')]))
 
     // analytics
     .then(() => Promise.all([bot.analytics.logAction(action_type, bus_stop, svc_nos), bot.analytics.logUser(action_type, cbq)]))
