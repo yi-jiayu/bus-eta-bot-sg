@@ -2,7 +2,7 @@
 const debug = require('debug')('bus-eta-bot-sg:bot/command-handlers/about');
 const telegram = require('../../telegram');
 
-const version = require('../VERSION.json').version;
+const version = require('../../package.json').version;
 
 /**
  * /version command handler
