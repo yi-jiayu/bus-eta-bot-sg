@@ -248,10 +248,18 @@ class editMessageText extends TelegramMethod {
       text
     };
 
-    if (inlineMsgId === null) {
+    if (!inlineMsgId) {
+      if (!chatId || !msgId) {
+        throw new TypeError('chatId and msgId have to be specified if inlineMsgId is not specified')
+      }
+
       params.chat_id = chatId;
       params.message_id = msgId;
     } else {
+      if (chatId || msgId) {
+        throw new TypeError('chatId and msgId should not be specified if inlineMsgId is specified')
+      }
+
       params.inline_message_id = inlineMsgId;
     }
 
@@ -271,7 +279,7 @@ class editMessageReplyMarkup extends TelegramMethod {
     super('editMessageReplyMarkup');
 
     if (!inline_message_id) {
-      if (!(chat_id && message_id)) {
+      if (!chat_id || !message_id) {
         throw new TypeError('if inline_message_id is not provided, chat_id and message_id have to be provided');
       }
 
