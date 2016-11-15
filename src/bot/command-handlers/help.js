@@ -18,10 +18,12 @@ module.exports = function (bot, msg) {
   const text = strings.help_text;
 
   const config = {
-    parse_mode: 'Markdown'
+    parse_mode: 'HTML'
   };
 
   return new telegram.OutgoingTextMessage(text, config).send(chat_id)
+
+    .then(console.log)
 
     // analytics
     .then(() => Promise.all([bot.analytics.logAction(action_type), bot.analytics.logUser(action_type, msg)]))

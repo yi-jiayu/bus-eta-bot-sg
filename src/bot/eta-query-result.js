@@ -9,7 +9,7 @@ const telegram = require('../telegram');
 
 /**
  * @param {string} argstr
- * @returns {Promise<object>}
+ * @returns {Promise.<object>}
  */
 function eta_query_results(argstr) {
   const args = argstr.split(' ');

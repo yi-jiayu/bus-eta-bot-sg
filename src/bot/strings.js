@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-  help_text: `*Bus Eta Bot Help*
+  help_text: `<b>Bus Eta Bot Help</b>
 Commands: 
 /eta [bus stop code] [service numbers] - Get etas for a particular bus stop, optionally filtered by specific service numbers.
 /history - List your most recent successful eta queries.

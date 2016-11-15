@@ -1,8 +1,16 @@
 "use strict";
+const fs = require('fs');
 const debug = require('debug')('bus-eta-bot-sg:bot/command-handlers/about');
 const telegram = require('../../telegram');
 
-const version = require('../../package.json').version;
+let version;
+if (fs.existsSync('../../package.json')) {
+  // production (since package.json will be copied into same folder level as main)
+  version = require('../../package.json').version;
+} else {
+  // development
+  version = require('../../../package.json').version;
+}
 
 /**
  * /version command handler
