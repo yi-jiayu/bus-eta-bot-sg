@@ -2,6 +2,8 @@
 const debug = require('debug')('bus-eta-bot-sg:bot/command-handlers/about');
 const telegram = require('../../telegram');
 
+const version = require('../VERSION.json').version;
+
 /**
  * /version command handler
  * @param {Bot} bot
@@ -11,7 +13,7 @@ module.exports = function (bot, msg) {
   const action = 'version';
 
   // todo: find way to include date with version information
-  const text = `Bus Eta Bot \`v${process.env.BOT_VERSION}\``;
+  const text = `Bus Eta Bot \`v${version}\``;
   const config = {parse_mode: 'Markdown'};
 
   return new telegram.OutgoingTextMessage(text, config).send(msg.chat_id)
