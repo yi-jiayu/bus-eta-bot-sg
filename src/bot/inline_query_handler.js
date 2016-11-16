@@ -2,9 +2,35 @@
 
 const debug = require('debug')('bus-eta-bot-sg:inline_query_handler');
 const telegram = require('../telegram');
-const eta_query_result = require('./eta-query-result');
 
 const argstr_regex = /^\d{5}(?: \S+)*/;
+
+/**
+ * Creates a new placeholder message for a eta query to argstr
+ * @param {string} id
+ * @param {string} title
+ * @param {string} description
+ * @param {string} argstr
+ * @return {InlineQueryResultArticle}
+ */
+function placeholder_message(id, title, description, argstr) {
+  const options = {description};
+  const input_text_msg_content = new telegram.InputTextMessageContent('Looking up etas...');
+  options.reply_markup = {
+    inline_keyboard: [[
+      {
+        text: 'Refresh',
+        callback_data: JSON.stringify({t: 'eta', a: argstr})
+      },
+      {
+        text: 'Done',
+        callback_data: JSON.stringify({t: 'eta', d: true})
+      }
+    ]]
+  };
+
+  return new telegram.InlineQueryResultArticle(id, title, input_text_msg_content, options);
+}
 
 /**
  * Handler for inline queries
@@ -58,120 +84,61 @@ module.exports = function (bot, ilq) {
       // populate the inline query results
       // since this will require a datamall api call per result, it would be good to do it in parallel
       // each result will need an inputtextmessagecontent as well as reply_markup
-      const results = [];
+      const resultsMap = new Map();
 
-      // cache the results from the favourites in case one of the favourites argtrs is also in history
-      const argstr_cache = {};
-
-      // start with the matched saved queries
       for (const fav of favourites) {
-        // the id is just the argstr we are querying for
-        const id = 'saved' + fav.query.slice(0, 32);
-        const title = fav.label;
-        const options = {
-          description: 'Saved query',
-        };
-
-        // check the favourites_argstr_cache if this argstr has already been looked up
-        if (argstr_cache[fav.query]) {
-          const {text, parse_mode, reply_markup} = argstr_cache[fav.query];
-          const input_txt_msg_content = new telegram.InputTextMessageContent(text, {parse_mode});
-          options.reply_markup = reply_markup;
-          const result = Promise.resolve(new telegram.InlineQueryResultArticle(id, title, input_txt_msg_content, options));
-
-          results.push(result);
-        } else {
-          const result = eta_query_result(fav.query)
-            .then(({text, parse_mode, reply_markup}) => {
-              // cache this result with the argstr as the key
-              argstr_cache[fav.query] = {text, parse_mode, reply_markup};
-
-              const input_txt_msg_content = new telegram.InputTextMessageContent(text, {parse_mode});
-              options.reply_markup = reply_markup;
-              return new telegram.InlineQueryResultArticle(id, title, input_txt_msg_content, options);
-            });
-
-          results.push(result);
+        // skip if this argstr has already been encountered
+        if (resultsMap.has(fav.query.slice(0, 64))) {
+          continue
         }
+
+        // limit fav.query length just in case since the max id length is 64 bytes
+        const id = fav.query.slice(0, 64);
+        const title = fav.query;
+        const description = fav.label;
+        const result = placeholder_message(id, title, description, fav.query);
+
+        resultsMap.set(fav.query.slice(0, 64), result);
       }
 
       // add in the matched history argstrs
       for (const argstr of history) {
-        // the id is just the argstr we are querying for
-        const id = 'history' + argstr.slice(0, 32);
-        const title = argstr;
-        const options = {
-          description: 'History'
-        };
-
-        // check the favourites_argstr_cache if this argstr has already been looked up
-        if (argstr_cache[argstr]) {
-          const {text, parse_mode, reply_markup} = argstr_cache[argstr];
-          const input_text_msg_content = new telegram.InputTextMessageContent(text, {parse_mode});
-          options.reply_markup = reply_markup;
-          const result = Promise.resolve(new telegram.InlineQueryResultArticle(id, title, input_text_msg_content, options));
-
-          results.push(result);
-        } else {
-          const result = eta_query_result(argstr)
-            .then(({text, parse_mode, reply_markup}) => {
-              argstr_cache[argstr] = {text, parse_mode, reply_markup};
-
-              const input_text_msg_content = new telegram.InputTextMessageContent(text, {parse_mode});
-              options.reply_markup = reply_markup;
-              return new telegram.InlineQueryResultArticle(id, title, input_text_msg_content, options);
-            });
-
-          results.push(result);
+        // skip if the argstr has already been added
+        if (resultsMap.has(argstr.slice(0, 64))) {
+          continue
         }
+
+        const id = argstr.slice(0, 64);
+        const title = argstr;
+        const description = 'History';
+
+        const result = placeholder_message(id, title, description, argstr);
+
+        resultsMap.set(argstr.slice(0, 64), result);
       }
 
-      // check if the query is a new argstr
-      if (argstr_regex.exec(ilq.query) !== null) {
-        // if it is, we query it as well but we need to check later if it returned any etas
-        const id = 'new_query' + ilq.query.slice(0, 32);
-        const title = ilq.query;
-        const options = {
-          description: 'New query'
-        };
+      // convert the results map to an array
+      const results = Array.from(resultsMap.values());
 
-        const result = Promise.resolve()
-          .then(() => {
-            if (argstr_cache[ilq.query]) {
-              return argstr_cache[ilq.query];
-            } else {
-              return eta_query_result(ilq.query);
-            }
-          })
-          .then(({text, parse_mode, reply_markup}) => {
-            const input_text_msg_content = new telegram.InputTextMessageContent(text, {parse_mode});
-            options.reply_markup = reply_markup;
-            return new telegram.InlineQueryResultArticle(id, title, input_text_msg_content, options);
-          })
-          .catch(err => {
-            if (err === 'no_etas') {
-              return null;
-            } else {
-              throw err;
-            }
-          });
+      debug(results);
+
+      // check if the query is a new argstr and it is not already in results
+      // todo: this may not be a valid eta query. eta-query-result needs to be able to handle the case when it is not
+      if (argstr_regex.exec(ilq.query) !== null && !resultsMap.has(ilq.query)) {
+        const id = ilq.query.slice(0, 64);
+        const title = ilq.query;
+        const description = 'New query';
+        const result = placeholder_message(id, title, description, title);
 
         results.unshift(result);
       }
 
-      // resolve all the InlineQueryResults in the results
-      return Promise.all(results)
-        .then(results => {
-          // shift the first element of results out if it is null
-          if (results[0] === null) {
-            results.shift();
-          }
-
-          // set cache_time to 10 seconds since bus etas are extremely time sensitive
-          return ilq.answerInlineQuery(results, {cache_time: 10, is_personal: true}).do();
-        })
-        .catch(err => debug(err));
+      // answer the inline query
+      // set cache_time to 10 seconds since bus etas are extremely time sensitive
+      return ilq.answerInlineQuery(results).do();
     })
+
+    .then(debug)
 
     // analytics
     .then(() => Promise.all([bot.analytics.logAction('inline_query'), bot.analytics.logUser('inline_query', ilq)]))

@@ -150,7 +150,7 @@ class InlineQueryResultArticle extends InlineQueryResult {
    * @param {boolean} [options.hide_url]
    * @param {string} [options.description]
    */
-  constructor(id, title, input_message_content, options) {
+  constructor(id, title, input_message_content, options = {}) {
     super('article');
 
     this.id = id;
@@ -178,7 +178,7 @@ class InputTextMessageContent extends InputMessageContent {
    * @param {string} [options.parse_mode]
    * @param {boolean} [options.disable_web_page_preview]
    */
-  constructor(text, options) {
+  constructor(text, options = {}) {
     super();
 
     this.message_text = text;
@@ -221,7 +221,7 @@ class TelegramMethod {
 }
 
 class sendMessage extends TelegramMethod {
-  constructor(chatId, text, config) {
+  constructor(chatId, text, config = {}) {
     super('sendMessage');
 
     const params = {
@@ -241,7 +241,7 @@ class sendMessage extends TelegramMethod {
 }
 
 class editMessageText extends TelegramMethod {
-  constructor(chatId, msgId, inlineMsgId, text, config) {
+  constructor(chatId, msgId, inlineMsgId, text, config = {}) {
     super('editMessageText');
 
     const params = {
@@ -337,7 +337,7 @@ class answerInlineQuery extends TelegramMethod {
    * @param {string} [options.switch_pm_text]
    * @param {string} [options.switch_pm_parameter]
    */
-  constructor(inline_query_id, results, options) {
+  constructor(inline_query_id, results, options = {}) {
     super('answerInlineQuery');
 
     this.params = {
