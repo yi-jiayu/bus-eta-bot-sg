@@ -3,7 +3,7 @@
 const nock = require('nock');
 
 nock('https://api.telegram.org:443', {"encodedQueryParams": true})
-  .post('/***REMOVED***/sendMessage', {
+  .post(`/bot${process.env.BOT_TOKEN}/sendMessage`, {
     "chat_id": 100710735,
     "text": "What is the number of the bus stop you would like etas for? You may optionally also include the specific bus services you're interested in. (Eg. `96049 2 24`)",
     "parse_mode": "Markdown"
