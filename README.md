@@ -1,3 +1,5 @@
+# This codebase has been deprecated and the current Bus Eta Bot source can be found at https://github.com/yi-jiayu/bus-eta-bot.
+
 # bus-eta-bot-sg
 
 ## Changelog
